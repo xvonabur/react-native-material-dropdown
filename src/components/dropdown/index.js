@@ -76,6 +76,7 @@ export default class Dropdown extends PureComponent {
     ],
 
     useNativeDriver: false,
+    labelSlidingOff: false
   };
 
   static propTypes = {
@@ -153,6 +154,7 @@ export default class Dropdown extends PureComponent {
     supportedOrientations: PropTypes.arrayOf(PropTypes.string),
 
     useNativeDriver: PropTypes.bool,
+    labelSlidingOff: PropTypes.bool
   };
 
   constructor(props) {
