@@ -174,6 +174,7 @@ export default class Dropdown extends PureComponent {
     this.renderItem = this.renderItem.bind(this);
 
     this.keyExtractor = this.keyExtractor.bind(this);
+    this.currentTitleExtractor = this.currentTitleExtractor.bind(this);
 
     this.blur = () => this.onClose();
     this.focus = this.onPress;
@@ -191,11 +192,32 @@ export default class Dropdown extends PureComponent {
     };
   }
 
+  currentTitleExtractor(value) {
+    let index = this.selectedIndex();
+    let title;
+
+    if (~index) {
+      title = this.props.labelExtractor(this.props.data[index], index);
+    }
+
+    if (null == title) {
+      title = value;
+    }
+
+    title = null == title || 'string' === typeof title?
+      title:
+      String(title);
+
+    return title;
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (prevProps.value !== this.props.value) {
-      this.txRef.current.setValue(this.props.value)
+      const title = this.currentTitleExtractor(this.props.value)
+      this.txRef.current.setValue(title)
     } else if (prevState.value !== this.state.value) {
-      this.txRef.current.setValue(this.state.value)
+      const title = this.currentTitleExtractor(this.state.value)
+      this.txRef.current.setValue(title)
     }
   }
 
@@ -492,24 +514,11 @@ export default class Dropdown extends PureComponent {
       renderAccessory = this.renderAccessory,
     } = this.props;
 
-    let index = this.selectedIndex();
-    let title;
-
-    if (~index) {
-      title = labelExtractor(data[index], index);
-    }
-
-    if (null == title) {
-      title = value;
-    }
+    const title = this.currentTitleExtractor(value)
 
     if ('function' === typeof renderBase) {
       return renderBase({ ...props, title, value, renderAccessory });
     }
-
-    title = null == title || 'string' === typeof title?
-      title:
-      String(title);
 
     return (
       <TextField
@@ -519,6 +528,7 @@ export default class Dropdown extends PureComponent {
 
         {...props}
 
+        value={title}
         editable={false}
         onChangeText={undefined}
         renderRightAccessory={renderAccessory}
